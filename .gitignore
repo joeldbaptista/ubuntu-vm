@@ -16,4 +16,4 @@ ansible/*.retry
 snapshots/
 
 # Local notes
-nodes/
+notes/
