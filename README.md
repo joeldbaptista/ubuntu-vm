@@ -97,31 +97,10 @@ The package list installed by Ansible is in `ansible/group_vars/all.yml`. Add
 what the current experiment needs and re-run `make provision`; the playbook is
 idempotent.
 
-## What this project does not own
-
-The libvirt storage pool `default` and the libvirt network `default` are
-host-wide resources shared with the k8s project under `~/homelab/k8s`. This
-project references both by name and never declares them as Terraform
-resources, so `make down` cannot tear down infrastructure that the cluster
-depends on.
-
-For the same reason the base image is named `<vm-name>-base.qcow2` and not
-`ubuntu-base.qcow2`: the latter is owned by the k8s project, and every cluster
-disk uses it as a backing store, so deleting it would break the cluster VMs.
-The cost is one base image per sandbox, roughly 600 MiB.
-
-## Requirements
-
-- `homelab` with KVM and libvirt running. See `notes/002_checking-kvm-and-libvirt.md`
-  in the parent repository for how that was verified.
-- Terraform, Ansible, `virsh`, `qemu-img`, `make` on `homelab`. All present.
-- An SSH key pair at the paths named in `config.env`. The public half is
-  injected into the guest by cloud-init.
-
 ## Layout
 
 ```
-virtual-sandbox/
+ubuntu-vm/
     README.md
     Makefile              # automation; wraps the scripts, adds nothing of its own
     config.env            # every setting, and the only file normally edited
