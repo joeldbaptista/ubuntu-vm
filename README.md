@@ -1,4 +1,4 @@
-# virtual-sandbox
+# ubuntu-vm
 
 A disposable Ubuntu Server VM on `homelab`, created with Terraform, configured
 with Ansible, and driven through `make`. It exists to be played with, broken,
@@ -35,9 +35,9 @@ there and not on the workstation. The workstation holds the source, and
 `make sync` copies it over:
 
 ```
-make sync                       # rsync to homelab:projects/virtual-sandbox/
+make sync                       # rsync to homelab:projects/ubuntu-vm/
 ssh homelab
-cd projects/virtual-sandbox
+cd projects/ubuntu-vm
 make all
 ```
 
@@ -83,7 +83,7 @@ Two properties of the file are deliberate:
 To go back:
 
 ```
-make restore SNAPSHOT=snapshots/virtual-sandbox-20260922T143005.qcow2
+make restore SNAPSHOT=snapshots/ubuntu-vm-20260922T143005.qcow2
 make start
 ```
 
