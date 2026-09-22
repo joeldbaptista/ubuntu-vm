@@ -1,0 +1,19 @@
+# Terraform local state: disposable, and it can contain sensitive values.
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfvars
+
+# Generated at run time from the VM's current address.
+ansible/inventory.ini
+ansible/*.retry
+
+# Marker recording which VM the local Terraform state belongs to.
+.vm-name
+
+# Snapshots are large disk images.
+snapshots/
+
+# Local notes
+nodes/

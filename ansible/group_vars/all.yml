@@ -1,0 +1,22 @@
+---
+# Packages installed in the sandbox. This list is the place to add whatever the
+# current experiment needs; re-running 'make provision' applies the change.
+sandbox_packages:
+  - build-essential
+  - curl
+  - git
+  - htop
+  - jq
+  - python3-pip
+  - python3-venv
+  - rsync
+  - tmux
+  - tree
+  - unzip
+  - vim
+
+# Timezone of the guest.
+sandbox_timezone: Europe/Lisbon
+
+# Directory created for experiments, owned by the login account.
+sandbox_workdir: /opt/sandbox

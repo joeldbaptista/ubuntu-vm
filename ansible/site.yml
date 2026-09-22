@@ -1,0 +1,56 @@
+---
+# Configuration applied to the sandbox after Terraform has created it. The
+# playbook is idempotent, so 'make provision' can be re-run at any time.
+- name: Configure the sandbox VM
+  hosts: sandbox
+  become: true
+
+  tasks:
+    - name: Wait for cloud-init to finish
+      # cloud-init is still installing packages during the first minutes of the
+      # first boot, and it holds the apt lock while it does. Starting before it
+      # finishes makes the package task fail on a locked dpkg frontend.
+      ansible.builtin.command: cloud-init status --wait
+      register: cloudinit_status
+      changed_when: false
+      failed_when: cloudinit_status.rc not in [0, 2]
+
+    - name: Set the timezone
+      community.general.timezone:
+        name: "{{ sandbox_timezone }}"
+      # community.general may not be installed. The timezone is a convenience,
+      # not a requirement, so a missing collection must not fail the run.
+      ignore_errors: true
+      register: timezone_result
+
+    - name: Set the timezone without the collection
+      ansible.builtin.command: "timedatectl set-timezone {{ sandbox_timezone }}"
+      when: timezone_result is failed
+      changed_when: true
+
+    - name: Update the package index
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install the sandbox packages
+      ansible.builtin.apt:
+        name: "{{ sandbox_packages }}"
+        state: present
+
+    - name: Create the work directory
+      ansible.builtin.file:
+        path: "{{ sandbox_workdir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0755"
+
+    - name: Report what was built
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }} ready:
+          {{ ansible_distribution }} {{ ansible_distribution_version }},
+          {{ ansible_processor_vcpus }} vcpu,
+          {{ (ansible_memtotal_mb / 1024) | round(1) }} GiB RAM,
+          work directory {{ sandbox_workdir }}
